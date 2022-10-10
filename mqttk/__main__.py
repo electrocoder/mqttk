@@ -205,7 +205,8 @@ class App:
 
         self.menubar.add_cascade(menu=self.export_menu, label="Export")
         self.export_menu.add_cascade(menu=self.export_messages_menu, label="Messages")
-        self.export_messages_menu.add_command(label="JSON", command=partial(self.export_messages, format="JSON"))
+        self.export_messages_menu.add_command(label="JSON_payload_json", command=partial(self.export_messages, format="JSON"))
+        self.export_messages_menu.add_command(label="JSON_payload_base64", command=partial(self.export_messages, format="JSON_base64"))
         self.export_messages_menu.add_command(label="CSV", command=partial(self.export_messages, format="CSV"))
         self.export_menu.add_command(label="Connection configuration", command=self.export_connection_config)
         self.export_menu.add_command(label="Subscribe/publish content", command=self.export_subscribe_publish)
@@ -352,7 +353,7 @@ class App:
 
         output_location = filedialog.asksaveasfilename(initialdir=self.config_handler.get_last_used_directory(),
                                                        title="Export {}".format(format),
-                                                       defaultextension="json" if format == "JSON" else "csv",
+                                                       defaultextension="json" if "JSON" in format else "csv",
                                                        initialfile="MQTTk_messages_{}".format(time.time()))
         if output_location == "":
             self.log.warning("Empty file name on export message (maybe the cancel button was pressed?")
@@ -365,14 +366,20 @@ class App:
 
         try:
             data = ""
-            if format == "JSON":
-                messages = list(self.subscribe_frame.messages.values())
+            messages = list(self.subscribe_frame.messages.values())
+            if "JSON_base64" in format:
                 for message in messages:
                     try:
                         message["payload"] = base64.b64encode(message["payload"]).decode("utf-8")
                     except:
                         pass
-                data = json.dumps(messages, indent=2)
+            elif "JSON" in format:
+                for message in messages:
+                    try:
+                        message["payload"] = json.loads(message["payload"])
+                    except:
+                        pass
+            data = json.dumps(messages, indent=2)
 
             if format == "CSV":
                 data = "ID,timestamp,date,time,subscription pattern,topic,QoS,retained,payload{}".format(os.linesep)
