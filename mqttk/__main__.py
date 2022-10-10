@@ -368,7 +368,10 @@ class App:
             if format == "JSON":
                 messages = list(self.subscribe_frame.messages.values())
                 for message in messages:
-                    message["payload"] = base64.b64encode(message["payload"]).decode("utf-8")
+                    try:
+                        message["payload"] = base64.b64encode(message["payload"]).decode("utf-8")
+                    except:
+                        pass
                 data = json.dumps(messages, indent=2)
 
             if format == "CSV":
@@ -420,8 +423,8 @@ class App:
             self.log_tab.tab_selected()
         else:
             self.log_tab.tab_deselected()
-            
-        # Solves display errors on Mac mini M1 (Monterey) 
+
+        # Solves display errors on Mac mini M1 (Monterey)
         root.after(50, lambda: self.tabs.tab(self.tabs.select(), text=self.tabs.tab(self.tabs.select(), "text")))
 
 
@@ -432,4 +435,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
