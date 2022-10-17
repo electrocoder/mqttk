@@ -2,4 +2,7 @@
 *.pyc
 *~
 .idea
+dist/mqttk_entry
+dist/mqttk_entry.app
 build/
+
