@@ -1,4 +1,5 @@
 import ssl
+import random
 
 from paho.mqtt.client import Client
 from paho.mqtt.client import MQTTv311
@@ -13,7 +14,7 @@ class MqttManager:
         self.on_disconnect_callback = on_disconnect_callback
         self.log = logger
 
-        self.client = Client(connection_configuration["client_id"],
+        self.client = Client("%s%d" % (connection_configuration["client_id"], random.randint(0, 100)),
                              clean_session=True,
                              userdata=None,
                              protocol=PROTOCOL_LOOKUP.get(connection_configuration["mqtt_version"], MQTTv311),
