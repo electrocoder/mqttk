@@ -48,9 +48,3 @@ coll = COLLECT(
     upx_exclude=[],
     name='mqttk_entry',
 )
-app = BUNDLE(
-    coll,
-    name='mqttk_entry.app',
-    icon=None,
-    bundle_identifier=None,
-)
